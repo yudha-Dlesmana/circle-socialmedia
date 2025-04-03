@@ -1,13 +1,20 @@
-import Posts from "@/components/content/Posts";
-import StatusForm from "@/components/content/StatusForm";
-import DummyPost from "@/dummy/posts";
+
+import ThreatForm from "@/components/home/ThreatForm";
+import DummyPost from "@/assets/dummy/threats";
+import ThreatsList from "@/components/home/ThreatList";
+
 
 export function Home(){
   return (
-    <div className="max-w-[748px] border border-gray-500">
-      <h1 className="text-[#FFFFFF] text-[28px] pt-10 px-5 pb-2 border-b border-gray-500">Home</h1>
-      <StatusForm />
-      <Posts posts={DummyPost} />
+    <div id="home" className="
+    border-x border-[#3F3F3F]">
+      <h1 className="
+      text-[#FFFFFF] text-[28px] 
+      pt-10 px-5 pb-2 
+      ">
+        Home</h1>
+      <ThreatForm />
+      <ThreatsList threats={DummyPost} />
     </div>
   )
 }

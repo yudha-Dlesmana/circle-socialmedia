@@ -1,97 +1,96 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form"
-import { Input } from "../ui/input"
-import { Button } from "../ui/button"
-import { NavLink } from "react-router"
+import { NavLink, useNavigate } from "react-router"
 import logo from '../../assets/logo.svg';
+import { useContext, useState } from "react"
+import useAuthStore from "@/stores/AuthStore"
+import { AuthContext } from "@/context/AuthContext";
 
-const registerSchema = z.object({
-  usernameSchema: z.string().min(6, "username must be at least 6 characters"),
-  emailSchema: z.string().email("Invalid email address"),
-  passwordSchema: z.string().min(12, "Password must be at least 12 characters").regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/, "Password must include a lowercase letter, an uppercase letter, a number, and a symbol.")
-})
+interface RegisterFormProp {
+  fullName: string;
+  email: string;
+  password: string;
+}
 
-export function RegisterForm(){
-  // Define Form
-  const register  = useForm<z.infer<typeof registerSchema>>({
-    resolver: zodResolver(registerSchema),
+function RegisterForm(){
+  const {user} = useContext(AuthContext)
+  const {setUser} = useAuthStore();
+  const navigate = useNavigate()
+
+  const [formState, setFormState] = useState<RegisterFormProp>({
+    fullName: "",
+    email: "",
+    password: "",
   })
 
-  // Handle Submit
-  const onSubmit = (values: z.infer<typeof registerSchema>) => {
-    console.log(values)
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFormState({
+      ...formState,
+      [event.target.name]: event.target.value,
+    });
   }
-  
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    const username = formState.email.split("@")[0]
+    setUser({
+      fullName:formState.fullName,
+      username: username,
+      email:formState.email,
+      password: formState.password,
+    })
+    console.log(user)
+    navigate('/login')
+  }
+
   return (
-    <div className="w-[412px] h-[336px]">
-      <Form {...register}>
-        <img src={logo} className="mb-2"/>
-        <h3 className="font-bold text-[28px] text-white mb-2">
-          Create account Circel</h3>
-        <form onSubmit={register.handleSubmit(onSubmit)} className="space-y-3">
-          <FormField
-            control = {register.control}
-            name = "usernameSchema"
-            render = {({field}) => (
-              <FormItem>
-                <FormControl>
-                  <Input className="
-                  h-10 
-                  text-white 
-                  border border-gray-500 
-                  hover:border-[#04A51E] 
-                  focus-visible:border-[#04A51E] 
-                  focus-visible:ring-[#04a135]" 
-                  type="text" placeholder="Username *" {...field} required/>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control = {register.control}
-            name = "emailSchema"
-            render = {({field}) => (
-              <FormItem>
-                <FormControl>
-                  <Input className="
-                  h-10 
-                  text-white 
-                  border border-gray-500 
-                  hover:border-[#04A51E] 
-                  focus-visible:border-[#04A51E] 
-                  focus-visible:ring-[#04a135]"  
-                  type="email" placeholder="Email *" {...field} required/>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control = {register.control}
-            name = "passwordSchema"
-            render = {({field}) => (
-              <FormItem>
-                <FormControl>
-                  <Input className="
-                  h-10 
-                  text-white 
-                  border border-gray-500 
-                  hover:border-[#04A51E] 
-                  focus-visible:border-[#04A51E] 
-                  focus-visible:ring-[#04a135]" 
-                  type="password" placeholder="password *" {...field} required/>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button className="w-full h-10 rounded-full bg-[#04A51E] text-xl font-bold">Create</Button>
-          <p className="text-white">Already have account? <NavLink to={"/login"} className='text-[#04A51E] font-bold' >Login</NavLink> </p> 
+    <div id="register" className="w-[412px] pt-[128px]">
+      <img src={logo} id="logo" className="mb-5 w-[108px]"/>
+      <h3 id="title" className="font-bold text-[28px] text-[#FFFFFF] mb-5">
+        Create account Circel</h3>
+      <form id="form" className="space-y-3"
+      onSubmit={handleSubmit}>
+        <input className="text-white 
+        h-12 w-full p-2
+        border border-[#545454] rounded-md
+      hover:border-[#04A51E] 
+      focus-visible:border-[#04A51E] 
+        focus:outline-none" 
+          type="text" 
+          name="fullName"
+          onChange={handleChange}
+          placeholder="Full Name *" required/>
+
+        <input className="text-white 
+        h-12 w-full p-2
+        border border-[#545454] rounded-md
+      hover:border-[#04A51E] 
+      focus-visible:border-[#04A51E] 
+        focus:outline-none"  
+          type="email"
+          name="email"
+          onChange={handleChange} 
+          placeholder="Email *" required/>
+        <input className="text-white 
+        h-12 w-full p-2
+        border border-[#545454] rounded-md
+      hover:border-[#04A51E] 
+      focus:border-[#04A51E] 
+        focus:outline-none" 
+          type="password"
+          name="password" 
+          onChange={handleChange}
+          placeholder="Password *" required/>
+          
+        <button className="bg-[#04A51E] 
+        text-white `
+        w-full h-11 
+        text-xl font-bold 
+        rounded-full ">
+          Create</button>
+        <p className="text-white">
+          Already have account? 
+          <NavLink to={"/login"} className='text-[#04A51E] font-bold'> Login</NavLink></p> 
         </form>
-      </Form>
+      
     </div>
   )
 }
+export default RegisterForm

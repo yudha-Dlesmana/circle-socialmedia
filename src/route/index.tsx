@@ -1,32 +1,37 @@
-import { Forgot } from "./auth/Forgot"
-import { Login } from "./auth/Login"
+import Forgot from "./auth/pages/Forgot"
+import { Login } from "./auth/pages/Login"
 import { createBrowserRouter } from "react-router"
-import { Register } from "./auth/Register"
-import { ResetPassword } from "./auth/ResetPassword"
+import { Register } from "./auth/pages/Register"
+import { ResetPassword } from "./auth/pages/ResetPassword"
 import { Base } from "./protected/Base"
 import { Home } from "./protected/pages/Home"
-import { Profile } from "./protected/pages/Profile"
+import Detail from "./protected/pages/Detail"
+import Auth from "./auth/Auth"
 
 
 const router = createBrowserRouter([
     {
-      path: '/login',
-      Component: Login
+      Component: Auth,
+      children: [
+        {
+          path: "/login",
+          Component: Login
+        },
+        {
+          path: '/register',
+          Component: Register
+        },
+        {
+          path: '/forgot',
+          Component: Forgot
+        },
+        {
+          path: '/reset',
+          Component: ResetPassword
+        },
 
+      ]
     },
-    {
-      path: '/register',
-      Component: Register
-    },
-    {
-      path: '/forgot',
-      Component: Forgot
-    },
-    {
-      path: '/reset',
-      Component: ResetPassword
-    },
-    
     {
       Component: Base,
       children: [
@@ -35,8 +40,8 @@ const router = createBrowserRouter([
           Component: Home,
         },
         {
-          path: "/profile",
-          Component: Profile,
+          path: "/detail/:id",
+          Component: Detail,
         },
       ],
     },

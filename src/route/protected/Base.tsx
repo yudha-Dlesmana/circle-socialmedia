@@ -1,12 +1,21 @@
-import  { Layout }  from "@/components/layout/Layout";
-import { Outlet } from "react-router";
+import  Center  from "@/components/layout/Center";
+import { AuthContext } from "@/context/AuthContext";
+import { useContext } from "react";
+import { Navigate, Outlet } from "react-router";
 
 
 export function Base (){
-  return (
-    <Layout>
-      <Outlet />
-    </Layout>
-    
-  );
+  const {user} = useContext(AuthContext)
+
+  if( user.login ){
+    return (
+      <Center>
+        <Outlet />
+      </Center>
+    );
+  } else {
+    return <Navigate to={"/login"}/>
+  }
+
+  
 }

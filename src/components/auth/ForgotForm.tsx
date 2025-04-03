@@ -1,58 +1,66 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 
-import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { NavLink } from "react-router";
-
+import { NavLink, useNavigate } from "react-router";
 import logo from '../../assets/logo.svg';
+import { useContext, useState } from "react";
+import { AuthContext } from "@/context/AuthContext";
 
+interface ForgotFormProp{
+  email: string
+}
 
-const ForgotSchema = z.object({
-   emailSchema: z.string().email("Invalid email address")
-})
+function ForgotForm(){
+  const {user} = useContext(AuthContext);
+  const navigate = useNavigate();
 
-export function ForgotForm(){
-  // Define Form
-  const login = useForm<z.infer<typeof ForgotSchema>>({
-    resolver: zodResolver(ForgotSchema),
+  const [ formState, setFormState] = useState<ForgotFormProp>({
+    email: ""
   })
-  // Handle Submit
-  const onSubmit = (values: z.infer<typeof ForgotSchema>) => {     
-    console.log(values.emailSchema)
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFormState({
+      ...formState,
+      [event.target.name]: event.target.value
+    })
   }
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    if(user.email == formState.email){
+      navigate("/reset")
+    } else {
+      alert("register user")
+      console.log(formState.email, user.email)
+    }
+  }
+  
 
   return (
-    <div className="w-[412px] h-[336px]">
-      <Form {...login}>
-        <img src={logo} className="mb-2"/>
-        <h3 className="font-bold text-[28px] text-white mb-2">Forgot Password</h3>
-        <form onSubmit={login.handleSubmit(onSubmit)} className="space-y-3">
-          <FormField
-            control = {login.control}
-            name = "emailSchema"
-            render = {({field}) => (
-              <FormItem>
-                <FormControl>
-                  <Input className="
-                  h-10 
-                  text-white 
-                  border border-gray-500 
-                  hover:border-[#04A51E] 
-                  focus-visible:border-[#04A51E] 
-                  focus-visible:ring-[#04a135]" 
-                  type="email" placeholder="Email *" {...field} required/>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button className="w-full h-10 rounded-full bg-[#04A51E] text-xl font-bold">Send Instruction</Button>
-          <p className="text-white">Already have account? <NavLink to={"/login"} className='text-[#04A51E] font-bold'>Login</NavLink></p> 
+    <div id="forgot-password" className="w-[412px] pt-[128px]">
+      <img src={logo} id="logo" className="mb-5"/>
+      <h3 id="title" className="font-bold text-[28px] text-[#FFFFFF] mb-5">Forgot Password</h3>
+      <form id="form" className="space-y-3" 
+      onSubmit={handleSubmit}>
+        <input className="text-white 
+        h-12 w-full p-2
+        border border-[#545454] rounded-md
+        hover:border-[#04A51E] 
+        focus-visible:border-[#04A51E] 
+        focus:outline-none" 
+          type = "email" 
+          name = "email"
+          onChange={handleChange}
+          placeholder="Email *" required/>
+                  
+        <button className="bg-[#04A51E]
+        text-white
+        w-full h-11
+        text-xl font-bold  
+        rounded-full">
+          Send Instruction</button>
+        <p className="text-white">
+            Already have account?
+            <NavLink to={"/login"} className='text-[#04A51E] font-bold'> Login</NavLink></p> 
         </form>
-      </Form>
-    </div>
+      </div>
   )
 }
+export default ForgotForm
